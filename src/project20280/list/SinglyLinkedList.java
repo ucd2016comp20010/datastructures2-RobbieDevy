@@ -222,7 +222,80 @@ public class SinglyLinkedList<E> implements List<E> {
         return sb.toString();
     }
 
+    @SuppressWarnings("unchecked")
+    public SinglyLinkedList<E> sortedMerge(SinglyLinkedList<E> other) {
+        SinglyLinkedList<E> result = new SinglyLinkedList<>();
+
+        Node<E> a = this.head;
+        Node<E> b = other.head;
+
+        Node<E> dummy = new Node<>(null, null);
+        Node<E> tail = dummy;
+
+        int count = 0;
+
+        while (a != null && b != null) {
+            E ea = a.getElement();
+            E eb = b.getElement();
+
+            int cmp = ((Comparable<? super E>) ea).compareTo(eb);
+
+            if (cmp <= 0) {
+                tail.setNext(new Node<>(ea, null));
+                a = a.getNext();
+            } else {
+                tail.setNext(new Node<>(eb, null));
+                b = b.getNext();
+            }
+            tail = tail.getNext();
+            count++;
+        }
+
+        while (a != null) {
+            tail.setNext(new Node<>(a.getElement(), null));
+            tail = tail.getNext();
+            a = a.getNext();
+            count++;
+        }
+
+        while (b != null) {
+            tail.setNext(new Node<>(b.getElement(), null));
+            tail = tail.getNext();
+            b = b.getNext();
+            count++;
+        }
+
+        result.head = dummy.getNext();
+        result.size = count;
+
+        return result;
+    }
+
+    public SinglyLinkedList<E> copy() {
+        SinglyLinkedList<E> twin = new SinglyLinkedList<E>();
+        Node<E> tmp = head;
+        while (tmp != null) {
+            twin.addLast(tmp.getElement());
+            tmp = tmp.next;
+        }
+        return twin;
+    }
+
+    public void reverse() {
+        Node<E> prev = null;
+        Node<E> curr = head;
+        Node<E> next;
+        while(curr != null) {
+            next = curr.getNext();
+            curr.setNext(prev);
+            prev = curr;
+            curr = next;
+        }
+        head = prev;
+    }
+
     public static void main(String[] args) {
+        /*
         SinglyLinkedList<Integer> ll = new SinglyLinkedList<Integer>();
         System.out.println("ll " + ll + " isEmpty: " + ll.isEmpty());
         //LinkedList<Integer> ll = new LinkedList<Integer>();
@@ -241,6 +314,28 @@ public class SinglyLinkedList<E> implements List<E> {
         System.out.println(ll);
         ll.remove(5);
         System.out.println(ll);
+        */
+        SinglyLinkedList<Integer> l1 = new SinglyLinkedList<>();
+        l1.addLast(2);
+        l1.addLast(6);
+        l1.addLast(20);
+        l1.addLast(24);
 
+        SinglyLinkedList<Integer> l2 = new SinglyLinkedList<>();
+        l2.addLast(1);
+        l2.addLast(3);
+        l2.addLast(5);
+        l2.addLast(8);
+        l2.addLast(12);
+        l2.addLast(19);
+        l2.addLast(25);
+
+        SinglyLinkedList<Integer> result = l1.sortedMerge(l2);
+        System.out.println(l1);
+        System.out.println(l2);
+        System.out.println("Merged L1 and L2: " + result);
+        System.out.println("Cloned L1: " + l1.copy());
+        l1.reverse();
+        System.out.println("Reversed L1: " + l1);
     }
 }

@@ -1,5 +1,7 @@
 package project20280.stacksqueues;
 
+import project20280.interfaces.Stack;
+
 class BracketChecker {
     private final String input;
 
@@ -9,6 +11,38 @@ class BracketChecker {
 
     public void check() {
         // TODO
+        Stack<Character> stack = new ArrayStack<>();
+
+        for (int i = 0; i < input.length(); i++) {
+            char open = input.charAt(i);
+
+            if (open == '{' || open == '[' || open == '(') {
+                stack.push(open);
+            }
+
+            else if (open == '}' || open == ']' || open == ')') {
+
+                if (stack.isEmpty()) {
+                    System.out.println("Error - missing opening bracket");
+                    return;
+                }
+
+                char close = stack.pop();
+
+                if ((open == '}' && close != '{') ||
+                        (open == ']' && close != '[') ||
+                        (open == ')' && close != '(')) {
+                    System.out.println("Error - mismatched brackets");
+                    return;
+                }
+            }
+        }
+
+        if (!stack.isEmpty()) {
+            System.out.println("Error - missing closing bracket");
+        } else {
+            System.out.println("Correct");
+        }
     }
 
     public static void main(String[] args) {
