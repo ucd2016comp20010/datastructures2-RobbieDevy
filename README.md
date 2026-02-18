@@ -41,3 +41,95 @@ Q3 - Stack A
         C.push(B.pop())
 
 
+------------ BINARY TREES ----------------
+Q2 - 
+     externalNodes(tree)
+          if tree.isempty()
+               return 0
+          return externalCount(tree, tree.root)
+
+     externalCount(T, p)
+          if position is null
+               return 0
+
+          if tree.left(position) is null and tree.right(position) is null
+               return 1
+     
+          return externalCount(tree, tree.left(position)) + externalCount(tree, tree.right(position))
+
+Q3 - 
+     leftExternalNodes(tree)
+          if tree.isempty()
+               return 0
+          return countLeftExternal(tree, tree.root(), false)
+
+     countLeftExternal(tree, position, isLeftChild)
+          if position is null
+               return 0
+
+          if tree.left(position) is null and tree.right(position) is null:
+               if isLeftChild is true
+                    return 1
+               else
+                    return 0
+          
+          return countLeftExternal(tree, tree.left(position), true) + countLeftExternal(tree, tree.right(position), false)
+
+Q4 - 
+Preorder - 
+E
+ \
+  X
+   \
+    A
+     \
+      M
+       \
+        F
+         \
+          U
+           \
+            N
+
+Inorder - 
+      M
+     / \
+    X   U
+   / \ / \
+  E  A F  N
+
+Postorder - 
+        N
+       /
+      U
+     /
+    F
+   /
+  M
+ /
+A
+/
+X
+/
+E
+
+
+Q5 - 
+countDescendants(tree, position):
+    if position is null:
+        return 0
+
+    total = 0
+
+    L = tree.left(p)
+    R = tree.right(p)
+
+    if L is not null:
+        total = total + 1
+        total = total + countDescendants(tree, L)
+
+    if R is not null:
+        total = total + 1
+        total = total + countDescendants(tree, R)
+
+    return total

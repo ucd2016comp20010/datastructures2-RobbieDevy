@@ -25,7 +25,10 @@ public abstract class AbstractBinaryTree<E> extends AbstractTree<E>
     @Override
     public Position<E> sibling(Position<E> p) {
         // TODO
-        return null;
+        Position<E> parent = parent(p);
+        if (parent == null) return null;          // p is root
+        if (p == left(parent)) return right(parent);
+        else return left(parent);
     }
 
     /**
@@ -38,7 +41,10 @@ public abstract class AbstractBinaryTree<E> extends AbstractTree<E>
     @Override
     public int numChildren(Position<E> p) {
         // TODO
-        return 0;
+        int count = 0;
+        if (left(p) != null) count++;
+        if (right(p) != null) count++;
+        return count;
     }
 
     /**
@@ -67,6 +73,11 @@ public abstract class AbstractBinaryTree<E> extends AbstractTree<E>
      */
     private void inorderSubtree(Position<E> p, List<Position<E>> snapshot) {
         // TODO
+        if (left(p) != null)
+            inorderSubtree(left(p), snapshot);
+        snapshot.add(p);
+        if (right(p) != null)
+            inorderSubtree(right(p), snapshot);
     }
 
     /**
@@ -89,6 +100,56 @@ public abstract class AbstractBinaryTree<E> extends AbstractTree<E>
     @Override
     public Iterable<Position<E>> positions() {
         return inorder();
+    }
+
+    /**
+     * Returns the diameter of the tree (number of edges on the longest path
+     * between any two nodes). For number of nodes on that path, add 1 (if non-empty).
+     */
+    public int diameter() {
+        if (isEmpty()) return 0;
+        return diameterHelper(root())[1];
+    }
+
+    /**
+     * Returns int[]{height, diameter} for subtree rooted at p.
+     * Height and diameter are measured in EDGES.
+     *
+     * Convention: null subtree has height = -1 and diameter = 0.
+     * Therefore, a leaf node ends up with height = 0.
+     */
+    private int[] diameterHelper(Position<E> p) {
+        if (p == null) return new int[]{-1, 0};
+
+        int[] L = diameterHelper(left(p));
+        int[] R = diameterHelper(right(p));
+
+        int height = 1 + Math.max(L[0], R[0]);
+
+        // longest path that goes through p (may use one side or both)
+        int throughP = L[0] + R[0] + 2;
+
+        int diameter = Math.max(Math.max(L[1], R[1]), throughP);
+
+        return new int[]{height, diameter};
+    }
+
+    // EXTERNAL NODE COUNT
+    public int externalNodes() {
+        if (isEmpty()) return 0;
+        return externalCount(root());
+    }
+
+    private int externalCount(Position<E> p) {
+        Position<E> L = left(p);
+        Position<E> R = right(p);
+
+        if (L == null && R == null) return 1;
+
+        int count = 0;
+        if (L != null) count += externalCount(L);
+        if (R != null) count += externalCount(R);
+        return count;
     }
 }
 
