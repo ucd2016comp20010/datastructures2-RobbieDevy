@@ -41,7 +41,7 @@ Q3 - Stack A
         C.push(B.pop())
 
 
------------- BINARY TREES ----------------
+------------ TREES 1 ----------------
 Q2 - 
      externalNodes(tree)
           if tree.isempty()

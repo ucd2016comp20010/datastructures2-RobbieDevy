@@ -1,8 +1,13 @@
 package project20280.tree;
 
+import org.junit.Test;
 import project20280.interfaces.Position;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
  * Concrete implementation of a binary tree using a node-based, linked
@@ -66,7 +71,32 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
         System.out.println("Height calls = " + bt.getHeightCallCount());
         System.out.println("Diameter (edges) = " + bt.diameter());
         System.out.println("Diameter (nodes) = " + (bt.isEmpty() ? 0 : bt.diameter() + 1));
+
+        LinkedBinaryTree <String> levelOrder = new LinkedBinaryTree <>();
+        String[] array = { "A", "B", "C", "D", "E", null, "F", null, null, "G", "H", null, null, null, null };
+        levelOrder.createLevelOrder(array);
+        System.out.println(levelOrder.toBinaryTreeString());
+
+        Integer [] inorder= {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,
+                    18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30};
+        Integer [] preorder= {18, 2, 1, 14, 13, 12, 4, 3, 9, 6, 5, 8, 7, 10, 11, 15, 16,
+                    17, 28, 23, 19, 22, 20, 21, 24, 27, 26, 25, 29, 30};
+
+        LinkedBinaryTree <Integer > construction = new LinkedBinaryTree <>();
+        construction.construct(inorder , preorder);
+        System.out.println(construction.toBinaryTreeString());
     }
+
+    @Test
+    public void testRootToPaths() {
+        Integer [] inorder = {0, 1, 2, 3, 4, 5, 6, 7, 8};
+        Integer [] preorder = {5, 1, 0, 4, 2, 3, 7, 6, 8};
+        LinkedBinaryTree <Integer > bt = new LinkedBinaryTree <>();
+        bt.construct(inorder , preorder);
+
+        System.out.println(bt.toBinaryTreeString());
+
+        assertEquals("[[5, 1, 0], [5, 1, 4, 2, 3], [5, 7, 6], [5, 7, 8]]", bt.rootPaths().toString());}
 
 
     /**
@@ -379,6 +409,75 @@ public class LinkedBinaryTree<E> extends AbstractBinaryTree<E> {
         return btp.print();
     }
 
+    public void construct(E[] inorder, E[] preorder) {
+        if(inorder == null || preorder == null || inorder.length == 0 || preorder.length == 0) return;
+
+        size = 0;
+        root = buildFromTraversals(inorder, preorder, 0, inorder.length - 1, 0, null);
+    }
+
+    private Node<E> buildFromTraversals(E[] inorder, E[] preorder, int start, int end, int preOrderIndex, Node<E> parent) {
+        if(start > end) return null;
+        E root = preorder[preOrderIndex];
+
+        int k = findIndex(inorder, root,start, end);
+        if (k == -1) {
+            throw new IllegalArgumentException("Value " + root + " not found in inorder");
+        }
+        Node<E> node = createNode(root, parent, null, null);
+        size++;
+
+        int leftSize = k - start;
+
+        Node<E> leftChild = buildFromTraversals(inorder, preorder,
+                start, k - 1,
+                preOrderIndex + 1,
+                node);
+
+        Node<E> rightChild = buildFromTraversals(inorder, preorder,
+                k + 1, end,
+                preOrderIndex + 1 + leftSize,
+                node);
+
+        node.setLeft(leftChild);
+        node.setRight(rightChild);
+
+        return node;
+    }
+
+    private int findIndex(E[] arr, E value, int start, int end) {
+        for (int i = start; i <= end; i++) {
+            if (arr[i].equals(value)) return i;
+        }
+        return -1;
+    }
+
+
+    public List<List<E>> rootPaths() {
+        List<List<E>> result = new ArrayList<>();
+        if(isEmpty()) return result;
+
+        List<E> current = new ArrayList<>();
+        rootToLeafPaths(root(), current, result);
+        return result;
+    }
+
+    private void rootToLeafPaths(Position<E> position, List<E> current, List<List<E>> result) {
+        if(position == null) return;
+        current.add(position.getElement());
+
+        Position<E> L = left(position);
+        Position<E> R = right(position);
+
+        if (L == null && R == null) {
+            result.add(new ArrayList<>(current));
+        } else {
+            if (L != null) rootToLeafPaths(L, current, result);
+            if (R != null) rootToLeafPaths(R, current, result);
+        }
+
+        current.remove(current.size() - 1);
+    }
     /**
      * Nested static class for a binary tree node.
      */
