@@ -162,7 +162,7 @@ class AVLTreeMapTest {
 
     @Test
     void testEntrySet() {
-        fail("Not yet implemented");
+       fail("Not yet implemented");
     }
 
     @Test
@@ -174,7 +174,7 @@ class AVLTreeMapTest {
         for (Integer i : arr) {
             map.put(i, Integer.toString(i));
         }
-        assertEquals("[⦰, 1, ⦰, 2, ⦰, 4, ⦰, 5, ⦰, 12, ⦰, 15, ⦰, 21, ⦰, 23, ⦰, 24, ⦰, 26, ⦰, 33, ⦰, 35, ⦰]", map.toString());
+        assertEquals("[1, 2, 4, 5, 12, 15, 21, 23, 24, 26, 33, 35]", map.toString());
     }
 
     @Test

@@ -281,6 +281,19 @@ public class SinglyLinkedList<E> implements List<E> {
         return twin;
     }
 
+    public SinglyLinkedList<E> recursiveCopy() {
+        SinglyLinkedList<E> copy = new SinglyLinkedList<>();
+        copy.head = copyNodes(this.head);
+        copy.size = this.size;
+
+        return copy;
+    }
+
+    private Node<E> copyNodes(Node<E> node) {
+        if (node == null) return null;
+        return new Node<>(node.getElement(), copyNodes(node.getNext()));
+    }
+
     public void reverse() {
         Node<E> prev = null;
         Node<E> curr = head;
@@ -292,6 +305,21 @@ public class SinglyLinkedList<E> implements List<E> {
             curr = next;
         }
         head = prev;
+    }
+
+    public void recursiveReverseHelper() {
+        head = reverseRecursive(head);
+    }
+
+    private Node<E> reverseRecursive(Node<E> node) {
+        if (node == null || node.getNext() == null) {
+            return node; // new head
+        }
+
+        Node<E> newHead = reverseRecursive(node.getNext());
+        node.getNext().setNext(node);
+        node.setNext(null);
+        return newHead;
     }
 
     public static void main(String[] args) {
@@ -337,5 +365,16 @@ public class SinglyLinkedList<E> implements List<E> {
         System.out.println("Cloned L1: " + l1.copy());
         l1.reverse();
         System.out.println("Reversed L1: " + l1);
+
+        SinglyLinkedList<Integer> recursiveList = new SinglyLinkedList<>();
+        recursiveList.addLast(2);
+        recursiveList.addLast(6);
+        recursiveList.addLast(20);
+        recursiveList.addLast(24);
+
+        SinglyLinkedList<Integer> copy = recursiveList.recursiveCopy();
+
+        System.out.println("Original (recursive copy): " + recursiveList);
+        System.out.println("Copy:(recursive copy):     " + copy);
     }
 }

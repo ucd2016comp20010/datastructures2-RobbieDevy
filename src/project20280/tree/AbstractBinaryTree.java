@@ -151,5 +151,26 @@ public abstract class AbstractBinaryTree<E> extends AbstractTree<E>
         if (R != null) count += externalCount(R);
         return count;
     }
+
+    public void printLeavesLeftToRight() {
+        if (isEmpty()) return;
+        printLeaves(root());
+        System.out.println();
+    }
+
+    private void printLeaves(Position<E> p) {
+        if (p == null) return;
+
+        Position<E> L = left(p);
+        Position<E> R = right(p);
+
+        if (L == null && R == null) {          // leaf
+            System.out.print(p.getElement() + " ");
+            return;
+        }
+
+        printLeaves(L);
+        printLeaves(R);
+    }
 }
 
